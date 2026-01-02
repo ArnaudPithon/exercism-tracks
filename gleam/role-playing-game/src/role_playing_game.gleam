@@ -30,17 +30,16 @@ fn clamp_to_zero(value: Int) -> Int {
 }
 
 pub fn cast_spell(player: Player, cost: Int) -> #(Player, Int) {
-  case player.mana {
-    Some(mana) if mana >= cost -> #(
-      Player(..player, mana: Some(mana - cost)),
-      cost * 2,
-    )
+  let #(mana, health, damage) = case player.mana {
+    Some(mana) if mana >= cost -> #(Some(mana - cost), player.health, cost * 2)
     // mana insuffisante -> 0 dégats
-    Some(_) -> #(player, 0)
+    Some(_) -> #(player.mana, player.health, 0)
     // pas de mana -> coût imputé à la santé
     None -> {
       let new_health = clamp_to_zero(player.health - cost)
-      #(Player(..player, health: new_health), 0)
+      #(player.mana, new_health, 0)
     }
   }
+
+  #(Player(..player, health: health, mana: mana), damage)
 }
