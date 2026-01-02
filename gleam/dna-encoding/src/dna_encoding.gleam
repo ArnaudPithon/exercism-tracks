@@ -38,34 +38,31 @@ pub fn encode(dna: List(Nucleotide)) -> BitArray {
   }
 }
 
+fn nucleotide_to_list(nucleotide: Int) -> List(Nucleotide) {
+  case decode_nucleotide(nucleotide) {
+    Ok(name) -> [name]
+    Error(Nil) -> []
+  }
+}
+
 fn decode_loop(dna: BitArray) -> List(Nucleotide) {
   case dna {
-    <<value:2>> ->
-      case decode_nucleotide(value) {
-        Ok(name) -> [name]
-        Error(Nil) -> []
-      }
+    <<value:2>> -> nucleotide_to_list(value)
     <<value:2, rest:bits>> ->
-      list.append(
-        case decode_nucleotide(value) {
-          Ok(name) -> [name]
-          Error(Nil) -> []
-        },
-        decode_loop(rest),
-      )
+      list.append(nucleotide_to_list(value), decode_loop(rest))
     _ -> []
   }
 }
 
 pub fn decode(dna: BitArray) -> Result(List(Nucleotide), Nil) {
   case bit_array.bit_size(dna) % 2 {
-    0 -> {
+    1 -> Error(Nil)
+    _ -> {
       let result = decode_loop(dna)
       case result {
         [_, ..] -> Ok(result)
         [] -> Error(Nil)
       }
     }
-    _ -> Error(Nil)
   }
 }
