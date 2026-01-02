@@ -1,3 +1,4 @@
+import gleam/int
 import gleam/option.{type Option, None, Some}
 
 pub type Player {
@@ -23,10 +24,7 @@ pub fn revive(player: Player) -> Option(Player) {
 }
 
 fn clamp_to_zero(value: Int) -> Int {
-  case value {
-    v if v > 0 -> v
-    _ -> 0
-  }
+  int.max(value, 0)
 }
 
 pub fn cast_spell(player: Player, cost: Int) -> #(Player, Int) {
@@ -37,7 +35,7 @@ pub fn cast_spell(player: Player, cost: Int) -> #(Player, Int) {
     // pas de mana -> coût imputé à la santé
     None -> {
       let new_health = clamp_to_zero(player.health - cost)
-      #(player.mana, new_health, 0)
+      #(None, new_health, 0)
     }
   }
 
