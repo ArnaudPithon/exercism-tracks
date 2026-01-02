@@ -1,3 +1,4 @@
+import gleam/bit_array
 import gleam/list
 
 pub type Nucleotide {
@@ -57,9 +58,14 @@ fn decode_loop(dna: BitArray) -> List(Nucleotide) {
 }
 
 pub fn decode(dna: BitArray) -> Result(List(Nucleotide), Nil) {
-  let result = decode_loop(dna)
-  case result {
-    [_, ..] -> Ok(result)
-    [] -> Error(Nil)
+  case bit_array.bit_size(dna) % 2 {
+    0 -> {
+      let result = decode_loop(dna)
+      case result {
+        [_, ..] -> Ok(result)
+        [] -> Error(Nil)
+      }
+    }
+    _ -> Error(Nil)
   }
 }
