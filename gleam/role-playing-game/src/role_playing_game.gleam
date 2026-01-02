@@ -27,17 +27,22 @@ pub fn cast_spell(player: Player, cost: Int) -> #(Player, Int) {
     Some(mana) if mana >= cost -> cost * 2
     _ -> 0
   }
-  let wizard = case player.mana {
-    Some(mana) if mana >= cost -> Player(..player, mana: Some(mana - cost))
-    Some(mana) if mana < cost -> player
-    _ -> {
-      let muggle = Player(..player, health: player.health - cost)
-      case muggle.health {
-        health if health <= 0 -> Player(..muggle, health: 0)
-        _ -> muggle
-      }
-    }
+
+  let mana = case player.mana {
+    Some(mana) if mana >= cost -> Some(mana - cost)
+    Some(mana) -> Some(mana)
+    None -> None
   }
 
+  let health = case player.mana {
+    Some(_) -> player.health
+    None ->
+      case player.health {
+        health if health > cost -> player.health - cost
+        _ -> 0
+      }
+  }
+
+  let wizard = Player(..player, health: health, mana: mana)
   #(wizard, damage)
 }
