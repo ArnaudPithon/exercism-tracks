@@ -22,27 +22,25 @@ pub fn revive(player: Player) -> Option(Player) {
   }
 }
 
-pub fn cast_spell(player: Player, cost: Int) -> #(Player, Int) {
-  let damage = case player.mana {
-    Some(mana) if mana >= cost -> cost * 2
+fn clamp_to_zero(value: Int) -> Int {
+  case value {
+    v if v > 0 -> v
     _ -> 0
   }
+}
 
-  let mana = case player.mana {
-    Some(mana) if mana >= cost -> Some(mana - cost)
-    Some(mana) -> Some(mana)
-    None -> None
+pub fn cast_spell(player: Player, cost: Int) -> #(Player, Int) {
+  case player.mana {
+    Some(mana) if mana >= cost -> #(
+      Player(..player, mana: Some(mana - cost)),
+      cost * 2,
+    )
+    // mana insuffisante -> 0 dégats
+    Some(_) -> #(player, 0)
+    // pas de mana -> coût imputé à la santé
+    None -> {
+      let new_health = clamp_to_zero(player.health - cost)
+      #(Player(..player, health: new_health), 0)
+    }
   }
-
-  let health = case player.mana {
-    Some(_) -> player.health
-    None ->
-      case player.health {
-        health if health > cost -> player.health - cost
-        _ -> 0
-      }
-  }
-
-  let wizard = Player(..player, health: health, mana: mana)
-  #(wizard, damage)
 }
