@@ -34,9 +34,10 @@ pub fn send_newsletter(
   |> result.try(fn(_) { read_emails(emails_path) })
   |> result.try(fn(emails_list) {
     list.map(emails_list, fn(email) {
-      send_email(email)
-      |> result.try(fn(_) { log_sent_email(log_path, email) })
-      |> result.lazy_or(fn() { Ok(Nil) })
+      case send_email(email) {
+        Ok(_) -> log_sent_email(log_path, email)
+        Error(_) -> Ok(Nil)
+      }
     })
     |> result.all()
     |> result.replace(Nil)
