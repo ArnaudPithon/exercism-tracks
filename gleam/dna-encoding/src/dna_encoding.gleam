@@ -1,5 +1,5 @@
-import gleam/bit_array
 import gleam/list
+import gleam/result
 
 pub type Nucleotide {
   Adenine
@@ -29,40 +29,27 @@ pub fn decode_nucleotide(nucleotide: Int) -> Result(Nucleotide, Nil) {
 
 pub fn encode(dna: List(Nucleotide)) -> BitArray {
   case dna {
-    [nucleotide] -> <<encode_nucleotide(nucleotide):2>>
-    [nucleotide, ..rest] -> <<
-      encode_nucleotide(nucleotide):2,
+    [name, ..rest] -> <<
+      encode_nucleotide(name):2,
       encode(rest):bits,
     >>
     [] -> <<>>
   }
 }
 
-fn nucleotide_to_list(nucleotide: Int) -> List(Nucleotide) {
-  case decode_nucleotide(nucleotide) {
-    Ok(name) -> [name]
-    Error(Nil) -> []
+fn chunk_dna(dna dna: BitArray, accu acc: List(Int)) -> Result(List(Int), Nil) {
+  case dna {
+    <<value:2, rest:bits>> -> chunk_dna(dna: rest, accu: [value, ..acc])
+    <<>> -> Ok(list.reverse(acc))
+    _ -> Error(Nil)
   }
 }
 
-fn decode_loop(dna: BitArray) -> List(Nucleotide) {
-  case dna {
-    <<value:2>> -> nucleotide_to_list(value)
-    <<value:2, rest:bits>> ->
-      list.append(nucleotide_to_list(value), decode_loop(rest))
-    _ -> []
-  }
+fn decode_sequence(sequence: List(Int)) -> Result(List(Nucleotide), Nil) {
+  list.map(sequence, with: decode_nucleotide)
+  |> result.all()
 }
 
 pub fn decode(dna: BitArray) -> Result(List(Nucleotide), Nil) {
-  case bit_array.bit_size(dna) % 2 {
-    1 -> Error(Nil)
-    _ -> {
-      let result = decode_loop(dna)
-      case result {
-        [_, ..] -> Ok(result)
-        [] -> Error(Nil)
-      }
-    }
-  }
+  chunk_dna(dna: dna, accu: []) |> result.try(decode_sequence)
 }
