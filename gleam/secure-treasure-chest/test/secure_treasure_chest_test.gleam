@@ -40,8 +40,9 @@ pub fn create_is_error_with_short_password_test() {
 
 pub fn open_is_ok_with_the_correct_password_test() {
   let assert Ok(chest) = secure_treasure_chest.create("wwwibble", 100)
-  secure_treasure_chest.open(chest, "wwwibble")
-  |> should.equal(Ok(100))
+  let _ =
+    secure_treasure_chest.open(chest, "wwwibble")
+    |> should.equal(Ok(100))
 
   let assert Ok(chest) = secure_treasure_chest.create("wwwobble", 1.5)
   secure_treasure_chest.open(chest, "wwwobble")
