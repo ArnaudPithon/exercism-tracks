@@ -39,7 +39,7 @@ pub fn encode(dna: List(Nucleotide)) -> BitArray {
 
 fn chunk_dna(dna dna: BitArray, accu acc: List(Int)) -> Result(List(Int), Nil) {
   case dna {
-    <<value:2, rest:bits>> -> chunk_dna(dna: rest, accu: [value, ..acc])
+    <<code:2, rest:bits>> -> chunk_dna(dna: rest, accu: [code, ..acc])
     <<>> -> Ok(list.reverse(acc))
     _ -> Error(Nil)
   }
