@@ -1,23 +1,30 @@
-// Please define the Usd type
+import gleam/list.{fold}
 
-// Please define the Eur type
+/// phantom types whithout constructors
+pub type Usd
 
-// Please define the Jpy type
+pub type Eur
 
-// Please define the Money type
+pub type Jpy
+
+/// opaque type with currency phantom parameter
+pub opaque type Money(currency) {
+  Money(amount: Int)
+}
 
 pub fn dollar(amount: Int) -> Money(Usd) {
-  todo
+  let _: Money(Usd) = Money(amount)
 }
 
 pub fn euro(amount: Int) -> Money(Eur) {
-  todo
+  let _: Money(Eur) = Money(amount)
 }
 
 pub fn yen(amount: Int) -> Money(Jpy) {
-  todo
+  let _: Money(Jpy) = Money(amount)
 }
 
 pub fn total(prices: List(Money(currency))) -> Money(currency) {
-  todo
+  prices
+  |> fold(Money(0), fn(a, b) { Money(a.amount + b.amount) })
 }
