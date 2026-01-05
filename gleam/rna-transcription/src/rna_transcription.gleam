@@ -45,7 +45,7 @@ pub fn to_rna(dna: String) -> Result(String, Nil) {
   dna
   |> string.to_graphemes()
   |> list.try_map(grapheme_to_nucleotide)
-  |> result.try(fn(a) { list.try_map(a, conv) })
-  |> result.map(fn(x) { list.map(x, nucleotide_to_grapheme) })
-  |> result.map(fn(x) { string.join(x, "") })
+  |> result.try(list.try_map(_, conv))
+  |> result.map(list.map(_, nucleotide_to_grapheme))
+  |> result.map(string.join(_, ""))
 }
