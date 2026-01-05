@@ -1,3 +1,5 @@
+import gleam/string
+
 pub fn reverse(value: String) -> String {
-  todo
+  string.reverse(value)
 }
