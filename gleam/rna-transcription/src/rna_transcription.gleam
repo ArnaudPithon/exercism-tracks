@@ -44,9 +44,8 @@ fn conv(nucleotide: Nucleotide) -> Result(Nucleotide, Nil) {
 pub fn to_rna(dna: String) -> Result(String, Nil) {
   dna
   |> string.to_graphemes()
-  |> list.map(fn(n) { grapheme_to_nucleotide(n) })
-  |> result.all()
-  |> result.try(fn(a) { list.try_map(a, fn(b) { conv(b) }) })
-  |> result.map(fn(x) { list.map(x, fn(x) { nucleotide_to_grapheme(x) }) })
+  |> list.try_map(grapheme_to_nucleotide)
+  |> result.try(fn(a) { list.try_map(a, conv) })
+  |> result.map(fn(x) { list.map(x, nucleotide_to_grapheme) })
   |> result.map(fn(x) { string.join(x, "") })
 }
