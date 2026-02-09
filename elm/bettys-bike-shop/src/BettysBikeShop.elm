@@ -1,11 +1,13 @@
-module BettysBikeShop exposing (poundsToString)
+module BettysBikeShop exposing (penceToPounds, poundsToString)
 
--- TODO: import the String module
+import String
 
 
+penceToPounds : Int -> Float
 penceToPounds pence =
-    Debug.todo "implement this function and create a type annotation"
+    toFloat pence / 100
 
 
+poundsToString : Float -> String
 poundsToString pounds =
-    Debug.todo "implement this function and create a type annotation"
+    "£" ++ String.fromFloat pounds
