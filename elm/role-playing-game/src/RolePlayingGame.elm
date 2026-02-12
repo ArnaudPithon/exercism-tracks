@@ -1,7 +1,5 @@
 module RolePlayingGame exposing (Player, castSpell, introduce, revive)
 
-import Task exposing (attempt)
-
 
 type alias Player =
     { name : Maybe String
@@ -13,12 +11,7 @@ type alias Player =
 
 introduce : Player -> String
 introduce { name } =
-    case name of
-        Just someName ->
-            someName
-
-        Nothing ->
-            "Mighty Magician"
+    Maybe.withDefault "Mighty Magician" name
 
 
 revive : Player -> Maybe Player
