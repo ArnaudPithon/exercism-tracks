@@ -1,5 +1,7 @@
 module RolePlayingGame exposing (Player, castSpell, introduce, revive)
 
+import Task exposing (attempt)
+
 
 type alias Player =
     { name : Maybe String
@@ -11,14 +13,40 @@ type alias Player =
 
 introduce : Player -> String
 introduce { name } =
-    Debug.todo "Please implement this function"
+    case name of
+        Just someName ->
+            someName
+
+        Nothing ->
+            "Mighty Magician"
 
 
 revive : Player -> Maybe Player
 revive player =
-    Debug.todo "Please implement this function"
+    if player.health /= 0 then
+        Nothing
+
+    else if player.level >= 10 then
+        Just { player | health = 100, mana = Just 100 }
+
+    else
+        Just { player | health = 100 }
 
 
 castSpell : Int -> Player -> ( Player, Int )
 castSpell manaCost player =
-    Debug.todo "Please implement this function"
+    case player.mana of
+        Nothing ->
+            -- le cout est déduit de la vie
+            let
+                healthFinale =
+                    max 0 (player.health - manaCost)
+            in
+            ( { player | health = healthFinale }, 0 )
+
+        Just someMana ->
+            if someMana < manaCost then
+                ( player, 0 )
+
+            else
+                ( { player | mana = Just (someMana - manaCost) }, manaCost * 2 )
