@@ -38,7 +38,7 @@ clean3 str =
         c3 s =
             case split "-" s of
                 head :: tail ->
-                    join "" <| head :: List.map capitalize tail
+                    concat <| head :: List.map capitalize tail
 
                 _ ->
                     s
