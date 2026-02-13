@@ -1,6 +1,5 @@
 module SqueakyClean exposing (clean, clean1, clean2, clean3, clean4)
 
-import Char exposing (toCode)
 import List
 import String exposing (..)
 
@@ -56,6 +55,6 @@ clean : String -> String
 clean str =
     let
         isGreek c =
-            toCode 'α' <= toCode c && toCode c <= toCode 'ω'
+            'α' <= c && c <= 'ω'
     in
     clean4 str |> filter (not << isGreek)
