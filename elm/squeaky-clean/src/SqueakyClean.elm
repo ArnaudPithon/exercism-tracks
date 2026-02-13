@@ -1,26 +1,81 @@
 module SqueakyClean exposing (clean, clean1, clean2, clean3, clean4)
 
+import Char exposing (isAlpha, isDigit)
+import List
+import String exposing (..)
+
 
 clean1 : String -> String
 clean1 str =
-    Debug.todo "Please implement this function"
+    replace " " "_" str
 
 
 clean2 : String -> String
 clean2 str =
-    Debug.todo "Please implement this function"
+    let
+        r : String -> String -> String
+        r c s =
+            replace c "[CTRL]" s
+    in
+    clean1 str
+        |> r "\n"
+        |> r "\t"
+        |> r "\u{000D}"
 
 
 clean3 : String -> String
 clean3 str =
-    Debug.todo "Please implement this function"
+    let
+        capitalize : String -> String
+        capitalize s =
+            case uncons s of
+                Just ( h, t ) ->
+                    toUpper (fromChar h) ++ t
+
+                Nothing ->
+                    s
+
+        c3 : String -> String
+        c3 s =
+            case split "-" s of
+                head :: tail ->
+                    join "" <| head :: List.map capitalize tail
+
+                _ ->
+                    s
+    in
+    clean2 str |> c3
 
 
 clean4 : String -> String
 clean4 str =
-    Debug.todo "Please implement this function"
+    let
+        wipeDigit : Char -> String
+        wipeDigit c =
+            if isDigit c then
+                ""
+
+            else
+                fromChar c
+    in
+    clean3 str |> transformBy wipeDigit
 
 
 clean : String -> String
 clean str =
-    Debug.todo "Please implement this function"
+    let
+        wipeGreek : Char -> String
+        wipeGreek c =
+            if not (isAlpha c) then
+                ""
+
+            else
+                fromChar c
+    in
+    clean4 str |> transformBy wipeGreek
+
+
+transformBy : (Char -> String) -> String -> String
+transformBy method chaine =
+    List.map method (toList chaine)
+        |> join ""
