@@ -1,6 +1,6 @@
 module SqueakyClean exposing (clean, clean1, clean2, clean3, clean4)
 
-import Char exposing (isAlpha, isDigit)
+import Char exposing (toCode)
 import List
 import String exposing (..)
 
@@ -49,33 +49,13 @@ clean3 str =
 
 clean4 : String -> String
 clean4 str =
-    let
-        wipeDigit : Char -> String
-        wipeDigit c =
-            if isDigit c then
-                ""
-
-            else
-                fromChar c
-    in
-    clean3 str |> transformBy wipeDigit
+    clean3 str |> filter (not << Char.isDigit)
 
 
 clean : String -> String
 clean str =
     let
-        wipeGreek : Char -> String
-        wipeGreek c =
-            if not (isAlpha c) then
-                ""
-
-            else
-                fromChar c
+        isGreek c =
+            toCode 'α' <= toCode c && toCode c <= toCode 'ω'
     in
-    clean4 str |> transformBy wipeGreek
-
-
-transformBy : (Char -> String) -> String -> String
-transformBy method chaine =
-    List.map method (toList chaine)
-        |> join ""
+    clean4 str |> filter (not << isGreek)
