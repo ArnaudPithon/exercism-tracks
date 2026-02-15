@@ -18,8 +18,9 @@ pub fn count_place_treasures(
   place: #(String, #(String, Int)),
   treasures: List(#(String, #(Int, String))),
 ) -> Int {
-  let there = place_location_to_treasure_location(place.1)
-  list.count(treasures, fn(t) { t.1 == there })
+  list.count(treasures, fn(treasure) {
+    treasure_location_matches_place_location(place.1, treasure.1)
+  })
 }
 
 pub fn special_case_swap_possible(
