@@ -1,25 +1,65 @@
 module TisburyTreasureHunt exposing (..)
 
--- Consider defining a type alias for TreasureLocation,
--- Treasure, PlaceLocation and Place,
--- and using them in the function type annotations
+import List
 
 
-placeLocationToTreasureLocation : ( Char, Int ) -> ( Int, Char )
+type alias PlaceLocation =
+    ( Char, Int )
+
+
+type alias Place =
+    ( String, PlaceLocation )
+
+
+type alias TreasureLocation =
+    ( Int, Char )
+
+
+type alias Treasure =
+    ( String, TreasureLocation )
+
+
+placeLocationToTreasureLocation : PlaceLocation -> TreasureLocation
 placeLocationToTreasureLocation placeLocation =
-    Debug.todo "implement this function"
+    let
+        ( c, i ) =
+            placeLocation
+    in
+    ( i, c )
 
 
-treasureLocationMatchesPlaceLocation : ( Char, Int ) -> ( Int, Char ) -> Bool
+treasureLocationMatchesPlaceLocation : PlaceLocation -> TreasureLocation -> Bool
 treasureLocationMatchesPlaceLocation placeLocation treasureLocation =
-    Debug.todo "implement this function"
+    placeLocationToTreasureLocation placeLocation == treasureLocation
 
 
-countPlaceTreasures : ( String, ( Char, Int ) ) -> List ( String, ( Int, Char ) ) -> Int
+countPlaceTreasures : Place -> List Treasure -> Int
 countPlaceTreasures place treasures =
-    Debug.todo "implement this function"
+    let
+        ( _, placeLocation ) =
+            place
+
+        treasuresLocations =
+            List.map (\( _, location ) -> location) treasures
+
+        here =
+            treasureLocationMatchesPlaceLocation placeLocation
+    in
+    List.filter here treasuresLocations
+        |> List.length
 
 
-specialCaseSwapPossible : ( String, TreasureLocation ) -> ( String, PlaceLocation ) -> ( String, TreasureLocation ) -> Bool
+specialCaseSwapPossible : Treasure -> Place -> Treasure -> Bool
 specialCaseSwapPossible ( foundTreasure, _ ) ( place, _ ) ( desiredTreasure, _ ) =
-    Debug.todo "implement this function"
+    case ( foundTreasure, place ) of
+        ( "Brass Spyglass", "Abandoned Lighthouse" ) ->
+            True
+
+        ( "Amethyst Octopus", "Stormy Breakwater" ) ->
+            desiredTreasure == "Crystal Crab" || desiredTreasure == "Glass Starfish"
+
+        ( "Vintage Pirate Hat", "Harbor Managers Office" ) ->
+            desiredTreasure == "Model Ship in Large Bottle" || desiredTreasure == "Antique Glass Fishnet Float"
+
+        ( _, _ ) ->
+            False
