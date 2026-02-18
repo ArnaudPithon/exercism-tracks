@@ -6,34 +6,89 @@ import TopScorersSupport exposing (PlayerName)
 
 updateGoalCountForPlayer : PlayerName -> Dict PlayerName Int -> Dict PlayerName Int
 updateGoalCountForPlayer playerName playerGoalCounts =
-    Debug.todo "implement updateGoalCountForPlayer function, to initialise or increment the goalcount for PlayerName"
+    let
+        count =
+            Maybe.withDefault 0 (Dict.get playerName playerGoalCounts)
+    in
+    Dict.insert playerName (count + 1) playerGoalCounts
 
 
 aggregateScorers : List PlayerName -> Dict PlayerName Int
 aggregateScorers playerNames =
-    Debug.todo "Use List.foldl and updateGoalCountForPlayer to convert the list into a Dict"
+    let
+        loop : List PlayerName -> Dict PlayerName Int -> Dict PlayerName Int
+        loop list counts =
+            case list of
+                name :: rest ->
+                    loop rest <| updateGoalCountForPlayer name counts
+
+                [] ->
+                    counts
+    in
+    loop playerNames Dict.empty
 
 
 removeInsignificantPlayers : Int -> Dict PlayerName Int -> Dict PlayerName Int
 removeInsignificantPlayers goalThreshold playerGoalCounts =
-    Debug.todo "implement removeInsignificantPlayers function, to remove players who have scored less than the threshold number of goals"
+    Dict.filter (\_ count -> count >= goalThreshold) playerGoalCounts
 
 
 resetPlayerGoalCount : PlayerName -> Dict PlayerName Int -> Dict PlayerName Int
 resetPlayerGoalCount playerName playerGoalCounts =
-    Debug.todo "implement resetPlayerGoalCount function, to reset the score of a player"
+    let
+        update count =
+            Maybe.map (\_ -> Maybe.withDefault 0 Nothing) count
+    in
+    Dict.update playerName update playerGoalCounts
 
 
 formatPlayer : PlayerName -> Dict PlayerName Int -> String
 formatPlayer playerName playerGoalCounts =
-    Debug.todo "implement formatPlayer function, for use on the player profile page"
+    let
+        goals name =
+            case Dict.get name playerGoalCounts of
+                Just v ->
+                    String.fromInt v
+
+                Nothing ->
+                    "0"
+    in
+    playerName ++ ": " ++ goals playerName
 
 
 formatPlayers : Dict PlayerName Int -> String
 formatPlayers players =
-    Debug.todo "implement formatPlayers function, for use on the Top Scorers page"
+    let
+        format : String -> String -> String
+        format acc string =
+            case acc of
+                "" ->
+                    string
+
+                _ ->
+                    acc ++ ", " ++ string
+
+        loop : List PlayerName -> String -> String
+        loop list output =
+            case list of
+                player :: rest ->
+                    loop rest <| format output (formatPlayer player players)
+
+                [] ->
+                    output
+    in
+    loop (Dict.keys players) ""
 
 
 combineGames : Dict PlayerName Int -> Dict PlayerName Int -> Dict PlayerName Int
 combineGames game1 game2 =
-    Debug.todo "implement combineGames function, to calculate total scores played in both games"
+    let
+        onlyOne : PlayerName -> Int -> Dict PlayerName Int -> Dict PlayerName Int
+        onlyOne key value =
+            Dict.insert key value
+
+        add : PlayerName -> Int -> Int -> Dict PlayerName Int -> Dict PlayerName Int
+        add key value1 value2 =
+            Dict.insert key (value1 + value2)
+    in
+    Dict.merge onlyOne add onlyOne game1 game2 Dict.empty
