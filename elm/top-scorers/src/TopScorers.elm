@@ -1,6 +1,7 @@
 module TopScorers exposing (..)
 
 import Dict exposing (Dict)
+import List
 import TopScorersSupport exposing (PlayerName)
 
 
@@ -8,24 +9,15 @@ updateGoalCountForPlayer : PlayerName -> Dict PlayerName Int -> Dict PlayerName 
 updateGoalCountForPlayer playerName playerGoalCounts =
     let
         count =
-            Maybe.withDefault 0 (Dict.get playerName playerGoalCounts)
+            Dict.get playerName playerGoalCounts
+                |> Maybe.withDefault 0
     in
     Dict.insert playerName (count + 1) playerGoalCounts
 
 
 aggregateScorers : List PlayerName -> Dict PlayerName Int
 aggregateScorers playerNames =
-    let
-        loop : List PlayerName -> Dict PlayerName Int -> Dict PlayerName Int
-        loop list counts =
-            case list of
-                name :: rest ->
-                    loop rest <| updateGoalCountForPlayer name counts
-
-                [] ->
-                    counts
-    in
-    loop playerNames Dict.empty
+    List.foldl updateGoalCountForPlayer Dict.empty playerNames
 
 
 removeInsignificantPlayers : Int -> Dict PlayerName Int -> Dict PlayerName Int
