@@ -46,12 +46,9 @@ formatPlayer : PlayerName -> Dict PlayerName Int -> String
 formatPlayer playerName playerGoalCounts =
     let
         goals name =
-            case Dict.get name playerGoalCounts of
-                Just v ->
-                    String.fromInt v
-
-                Nothing ->
-                    "0"
+            Dict.get name playerGoalCounts
+                |> Maybe.withDefault 0
+                |> String.fromInt
     in
     playerName ++ ": " ++ goals playerName
 
