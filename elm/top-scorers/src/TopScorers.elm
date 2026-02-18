@@ -48,25 +48,22 @@ formatPlayer playerName playerGoalCounts =
 formatPlayers : Dict PlayerName Int -> String
 formatPlayers players =
     let
-        format : String -> String -> String
-        format acc string =
+        build : String -> String -> String
+        build acc playerString =
             case acc of
                 "" ->
-                    string
+                    playerString
 
                 _ ->
-                    acc ++ ", " ++ string
+                    acc ++ ", " ++ playerString
 
-        loop : List PlayerName -> String -> String
-        loop list output =
-            case list of
-                player :: rest ->
-                    loop rest <| format output (formatPlayer player players)
-
-                [] ->
-                    output
+        format : PlayerName -> String -> String
+        format name acc =
+            formatPlayer name players
+                |> build acc
     in
-    loop (Dict.keys players) ""
+    Dict.keys players
+        |> List.foldl format ""
 
 
 combineGames : Dict PlayerName Int -> Dict PlayerName Int -> Dict PlayerName Int
