@@ -47,6 +47,11 @@ formatPlayer playerName playerGoalCounts =
 
 formatPlayers : Dict PlayerName Int -> String
 formatPlayers players =
+    -- Pourrait être fortement simplifiée en utilisant List.map et
+    -- String.join
+    -- L'idée étant simplement de mapper la liste des joueurs avec une
+    -- liste composée avec formatPlayer, puis je construire une chaine
+    -- en rejoignant la liste avec ", "
     let
         build : String -> String -> String
         build acc playerString =
