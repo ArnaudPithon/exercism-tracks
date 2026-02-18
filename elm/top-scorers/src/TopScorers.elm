@@ -36,8 +36,8 @@ removeInsignificantPlayers goalThreshold playerGoalCounts =
 resetPlayerGoalCount : PlayerName -> Dict PlayerName Int -> Dict PlayerName Int
 resetPlayerGoalCount playerName playerGoalCounts =
     let
-        update count =
-            Maybe.map (\_ -> Maybe.withDefault 0 Nothing) count
+        update =
+            Maybe.map (\_ -> 0)
     in
     Dict.update playerName update playerGoalCounts
 
