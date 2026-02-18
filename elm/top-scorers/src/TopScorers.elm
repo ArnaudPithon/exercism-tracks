@@ -73,13 +73,10 @@ formatPlayers players =
 
 combineGames : Dict PlayerName Int -> Dict PlayerName Int -> Dict PlayerName Int
 combineGames game1 game2 =
-    let
-        onlyOne : PlayerName -> Int -> Dict PlayerName Int -> Dict PlayerName Int
-        onlyOne key value =
-            Dict.insert key value
-
-        add : PlayerName -> Int -> Int -> Dict PlayerName Int -> Dict PlayerName Int
-        add key value1 value2 =
-            Dict.insert key (value1 + value2)
-    in
-    Dict.merge onlyOne add onlyOne game1 game2 Dict.empty
+    Dict.merge
+        Dict.insert
+        (\player score1 score2 -> Dict.insert player (score1 + score2))
+        Dict.insert
+        game1
+        game2
+        Dict.empty
